@@ -4,7 +4,7 @@ use geometry::prim::{Prim};
 use geometry::prims::{Plane, Sphere, Triangle};
 use light::light::{Light};
 use light::lights::{PointLight, SphereLight};
-use material::materials::{CookTorranceMaterial, FlatMaterial, PhongMaterial};
+use material::materials::{CookTorranceMaterial};
 use material::Texture;
 use material::textures::{CheckerTexture, CubeMap, UVTexture, ImageTexture};
 use mat4::{Mat4, Transform};

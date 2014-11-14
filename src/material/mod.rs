@@ -5,12 +5,8 @@ pub mod texture;
 
 pub mod materials {
     pub use self::cooktorrancematerial::CookTorranceMaterial;
-    pub use self::flatmaterial::FlatMaterial;
-    pub use self::phongmaterial::PhongMaterial;
 
     mod cooktorrancematerial;
-    mod flatmaterial;
-    mod phongmaterial;
 }
 
 pub mod textures {
