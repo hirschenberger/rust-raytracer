@@ -10,10 +10,10 @@ pub struct CookTorranceMaterial {
     pub k_s: f64,            // Local specular coefficient
     pub k_sg: f64,           // Global specular coefficient (mirror reflection)
     pub k_tg: f64,           // Global transmissive coefficient (refraction)
-    pub ambient: Vec3,       // Ambient color
-    pub diffuse: Vec3,       // Diffuse color
-    pub transmission: Vec3,  // Transmissive color
-    pub specular: Vec3,      // Specular color
+    pub ambient: f64,       // Ambient color
+    pub diffuse: f64,       // Diffuse color
+    pub transmission: f64,  // Transmissive color
+    pub specular: f64,      // Specular color
     pub roughness: f64,      // Smaller = shininer => smaller highlight spot on surface
     pub gauss_constant: f64, // Controls curve of distribution of microfacets
     pub ior: f64,            // Index of refraction, also used for specular highlights
@@ -21,12 +21,9 @@ pub struct CookTorranceMaterial {
 }
 
 impl Material for CookTorranceMaterial {
-    fn sample(&self, n: Vec3, i: Vec3, l: Vec3, u: f64, v: f64) -> Vec3 {
-        let ambient  = self.ambient.scale(self.k_a);
-        let diffuse  = self.diffuse.scale(self.k_d).scale(n.dot(&l)) * match self.diffuse_texture {
-            Some(ref x) => x.color(u, v),
-            None => Vec3::one()
-        };
+    fn sample(&self, n: Vec3, i: Vec3, l: Vec3, u: f64, v: f64) -> f64 {
+        let ambient  = self.ambient * self.k_a;
+        let diffuse  = self.diffuse * self.k_d * n.dot(&l);
 
         // Specular calculations
         let h = (l + i).unit();
@@ -52,7 +49,7 @@ impl Material for CookTorranceMaterial {
 
         let brdf = f * d * g / (n_dot_v * n_dot_l * PI);
 
-        self.specular.scale(self.k_s * brdf) + diffuse + ambient
+        self.specular * self.k_s * brdf + diffuse + ambient
     }
 
     fn is_reflective(&self) -> bool {
@@ -63,15 +60,15 @@ impl Material for CookTorranceMaterial {
         self.k_tg > 0.0
     }
 
-    fn global_specular(&self, color: &Vec3) -> Vec3 {
-        color.scale(self.k_sg)
+    fn global_specular(&self, color: f64) ->  f64 {
+        color * self.k_sg
     }
 
-    fn global_transmissive(&self, color: &Vec3) -> Vec3 {
-        color.scale(self.k_tg)
+    fn global_transmissive(&self, color: f64) -> f64 {
+        color * self.k_tg
     }
 
-    fn transmission(&self) -> Vec3 {
+    fn transmission(&self) -> f64 {
         self.transmission
     }
 

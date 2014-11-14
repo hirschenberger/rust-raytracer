@@ -5,7 +5,7 @@ use vec3::Vec3;
 #[allow(dead_code)]
 pub struct SphereLight {
     pub position: Vec3,
-    pub color: Vec3,
+    pub intensity: f64,
     pub radius: f64
 }
 
@@ -22,8 +22,8 @@ impl Light for SphereLight {
         self.position + jitter
     }
 
-    fn color(&self) -> Vec3 {
-        self.color
+    fn intensity(&self) -> f64 {
+        self.intensity
     }
 
     fn center(&self) -> Vec3 {

@@ -4,7 +4,7 @@ use vec3::Vec3;
 #[allow(dead_code)]
 pub struct PointLight {
     pub position: Vec3,
-    pub color: Vec3
+    pub intensity: f64
 }
 
 impl Light for PointLight {
@@ -12,8 +12,8 @@ impl Light for PointLight {
         self.position
     }
 
-    fn color(&self) -> Vec3 {
-        self.color
+    fn intensity(&self) -> f64 {
+        self.intensity
     }
 
     fn center(&self) -> Vec3 {

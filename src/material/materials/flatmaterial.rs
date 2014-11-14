@@ -4,11 +4,11 @@ use vec3::Vec3;
 #[allow(dead_code)]
 #[deriving(Clone)]
 pub struct FlatMaterial {
-    pub color: Vec3
+    pub color: f64
 }
 
 impl Material for FlatMaterial {
-    fn sample(&self, _n: Vec3, _i: Vec3, _l: Vec3, _u: f64, _v: f64) -> Vec3 {
+    fn sample(&self, _n: Vec3, _i: Vec3, _l: Vec3, _u: f64, _v: f64) -> f64 {
         self.color
     }
 
@@ -20,16 +20,16 @@ impl Material for FlatMaterial {
         false
     }
 
-    fn global_specular(&self, _color: &Vec3) -> Vec3 {
-        Vec3::zero()
+    fn global_specular(&self, _color: f64) -> f64 {
+        0.0
     }
 
-    fn global_transmissive(&self, _color: &Vec3) -> Vec3 {
-        Vec3::zero()
+    fn global_transmissive(&self, _color: f64) -> f64 {
+        0.0
     }
 
-    fn transmission(&self) -> Vec3 {
-        Vec3::zero()
+    fn transmission(&self) -> f64 {
+        0.0
     }
 
     fn ior(&self) -> f64 {

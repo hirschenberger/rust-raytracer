@@ -3,7 +3,7 @@
     "fov": 30.0,
     "focal_dist": [6.0, 6.5],
     "min_intensity": 128,
-    "shadow_samples": 64,
+    "shadow_samples": 1,
     "pixel_samples": 2,
     "output_file": "test"
 }

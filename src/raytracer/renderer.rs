@@ -84,7 +84,7 @@ impl Renderer {
 
                 // Supersampling, jitter algorithm
                 let pixel_width = 1.0 / pixel_samples as f64;
-                let mut color = Vec3::zero();
+                let mut color = 0f64;
 
                 for y_subpixel in range(0, pixel_samples) {
                     for x_subpixel in range(0, pixel_samples) {
@@ -100,28 +100,28 @@ impl Renderer {
                         let result = Renderer::trace(scene, &ray, shadow_samples);
                         // Clamp subpixels for now to avoid intense aliasing when combined value is clamped later
                         // Should think of a better way to handle this
-                        color = color + result.clamp(0.0, 1.0).scale(1.0 / (pixel_samples * pixel_samples) as f64);
+                        color = color + result / (pixel_samples * pixel_samples) as f64;
                     }
                 }
-                tile[(rel_x, rel_y)] = ColorRGBA::new_rgb_clamped(color.x, color.y, color.z);
+                tile[(rel_x, rel_y)] = ColorRGBA::new_rgb_clamped(color, color, color);
             }
         }
 
         box tile
     }
 
-    fn trace(scene: &Scene, ray: &Ray, shadow_samples: uint) -> Vec3 {
+    fn trace(scene: &Scene, ray: &Ray, shadow_samples: uint) -> f64 {
         match ray.get_nearest_hit(scene) {
             Some(hit) => {
                 let n = hit.n.unit();
                 let i = (-ray.direction).unit();
 
                 // Local lighting computation: surface shading, shadows
-                let result = scene.lights.iter().fold(Vec3::zero(), |color_acc, light| {
+                let result = scene.lights.iter().fold(0f64, |color_acc, light| {
                     let shadow = Renderer::shadow_intensity(scene, &hit, light, shadow_samples);
                     let l = (light.center() - hit.position).unit();
 
-                    color_acc + light.color() * hit.material.sample(n, i, l, hit.u, hit.v) * shadow
+                    color_acc + light.intensity() * hit.material.sample(n, i, l, hit.u, hit.v) * shadow
                 });
                 result
             },
@@ -130,13 +130,13 @@ impl Renderer {
     }
 
     fn shadow_intensity(scene: &Scene, hit: &Intersection,
-                        light: &Box<Light+Send+Sync>, shadow_samples: uint) -> Vec3 {
+                        light: &Box<Light+Send+Sync>, shadow_samples: uint) -> f64 {
 
-        if shadow_samples <= 0 { return Vec3::one() }
+        if shadow_samples <= 0 { return 1.0 }
 
         // Point light speedup (no point in sampling a point light multiple times)
         let shadow_sample_tries = if light.is_point() { 1 } else { shadow_samples };
-        let mut shadow = Vec3::zero();
+        let mut shadow = 0f64;
 
         // Take average shadow color after jittering/sampling light position
         for _ in range(0, shadow_sample_tries) {
@@ -147,12 +147,11 @@ impl Renderer {
             let shadow_l = (sampled_light_position - hit.position).unit();
             let shadow_ray = Ray::new(hit.position, shadow_l);
             let distance_to_light = (sampled_light_position - hit.position).len();
-
             // Check against candidate primitives in scene for occlusion
             // and multiply shadow color by occluders' shadow colors
             let mut candidate_nodes = scene.octree.get_intersected_objects(&shadow_ray);
 
-            shadow = shadow + candidate_nodes.fold(Vec3::one(), |shadow_acc, prim| {
+            shadow = shadow + candidate_nodes.fold(1.0f64, |shadow_acc, prim| {
                 let occlusion = prim.intersects(&shadow_ray, EPSILON, distance_to_light);
                 match occlusion {
                     Some(occlusion) => shadow_acc * occlusion.material.transmission(),
@@ -161,7 +160,7 @@ impl Renderer {
             });
         }
 
-        shadow.scale(1.0 / shadow_sample_tries as f64)
+        shadow / shadow_sample_tries as f64
     }
 
 }
