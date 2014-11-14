@@ -10,7 +10,6 @@ pub struct Octree<T> {
     pub depth: int,
     pub children: Vec<Octree<T>>,
     pub data: Vec<OctreeData>,
-    pub infinites: Vec<T> // for infinite prims (planes)
 }
 
 #[deriving(Clone)]
@@ -35,15 +34,13 @@ impl<T> Octree<T> {
     pub fn new(bbox: BBox, depth: int) -> Octree<T> {
         let vec_children: Vec<Octree<T>> = Vec::new();
         let vec_data: Vec<OctreeData> = Vec::new();
-        let vec_infinite_data: Vec<T> = Vec::new();
 
         Octree {
             prims: None,
             bbox: bbox,
             depth: depth,
             children: vec_children,
-            data: vec_data,
-            infinites: vec_infinite_data
+            data: vec_data
         }
     }
 
@@ -127,19 +124,17 @@ impl Octree<Box<Prim+Send+Sync>> {
     #[allow(dead_code)]
     pub fn new_from_prims(prims: Vec<Box<Prim+Send+Sync>>) -> Octree<Box<Prim+Send+Sync>> {
         let bounds = get_bounds_from_objects(&prims);
-        let (finites, infinites) = prims.partition(|prim| prim.bounding().is_some());
         // pbrt recommended max depth for a k-d tree (though, we're using an octree)
         // For a k-d tree: 8 + 1.3 * log2(N)
-        let depth = (1.2 * (finites.len() as f64).log(8.0)).round() as int;
+        let depth = (1.2 * (prims.len() as f64).log(8.0)).round() as int;
 
         println!("Octree maximum depth {}", depth);
         let mut octree = Octree::new(bounds, depth);
 
-        for (i, prim) in finites.iter().enumerate() {
+        for (i, prim) in prims.iter().enumerate() {
             octree.insert(i, prim.bounding());
         }
-        octree.prims = Some(finites);
-        octree.infinites = infinites;
+        octree.prims = Some(prims);
 
         octree
     }
@@ -154,10 +149,7 @@ struct OctreeIterator<'a, T:'a> {
     prims: &'a Vec<T>,
     stack: Vec<&'a Octree<T>>,
     cur_iter: Option<Items<'a, OctreeData>>,
-    ray: &'a Ray,
-    infinites: Items<'a, T>,
-    just_infinites: bool
-
+    ray: &'a Ray
 }
 
 
@@ -171,9 +163,7 @@ impl<'a> OctreeIterator<'a, Box<Prim+Send+Sync>> {
             prims: prims,
             stack: vec![root],
             cur_iter: None,
-            ray: ray,
-            infinites: root.infinites.iter(),
-            just_infinites: false
+            ray: ray
         }
     }
 }
@@ -181,9 +171,6 @@ impl<'a> OctreeIterator<'a, Box<Prim+Send+Sync>> {
 
 impl<'a> Iterator<&'a Box<Prim+Send+Sync>> for OctreeIterator<'a, Box<Prim+Send+Sync>> {
     fn next(&mut self) -> Option<&'a Box<Prim+Send+Sync>> {
-        if self.just_infinites {
-            return self.infinites.next();
-        }
         loop {
             let (new_cur_iter, val) = match self.cur_iter {
                 Some(mut cur_iter) => match cur_iter.next() {
@@ -212,7 +199,6 @@ impl<'a> Iterator<&'a Box<Prim+Send+Sync>> for OctreeIterator<'a, Box<Prim+Send+
                 None => (),
             }
         }
-        self.just_infinites = true;
-        self.infinites.next()
+        None
     }
 }
