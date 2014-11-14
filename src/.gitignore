@@ -9,6 +9,7 @@ main.exe
 *.avi
 *.mkv
 *.dmp
+*.swp
 
 # Windows image file caches
 Thumbs.db
