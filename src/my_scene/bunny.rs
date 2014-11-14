@@ -8,7 +8,6 @@ use material::materials::{CookTorranceMaterial, FlatMaterial, PhongMaterial};
 use material::Texture;
 use material::textures::{CheckerTexture, CubeMap, UVTexture, ImageTexture};
 use raytracer::Octree;
-use raytracer::animator::CameraKeyframe;
 use scene::{Camera, Scene};
 use vec3::Vec3;
 
@@ -48,13 +47,5 @@ pub fn get_scene() -> Scene {
         lights: lights,
         octree: octree,
         background: Vec3 { x: 0.3, y: 0.5, z: 0.8 },
-        skybox: Some(CubeMap::load(
-            "./docs/assets/textures/skyboxes/storm_y_up/left.ppm",
-            "./docs/assets/textures/skyboxes/storm_y_up/right.ppm",
-            "./docs/assets/textures/skyboxes/storm_y_up/down.ppm",
-            "./docs/assets/textures/skyboxes/storm_y_up/up.ppm",
-            "./docs/assets/textures/skyboxes/storm_y_up/front.ppm",
-            "./docs/assets/textures/skyboxes/storm_y_up/back.ppm"
-        ))
     }
 }

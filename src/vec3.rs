@@ -73,25 +73,6 @@ impl Vec3 {
         n.scale(2.0 * (n.dot(v))) - *v
     }
 
-    /// V, N should be unit vectors
-    /// ior: Refractive index
-    /// inside: Is the ray inside an object (ie. going out of an object)?
-    pub fn refract(v: &Vec3, n: &Vec3, ior: f64, inside: bool) -> Option<Vec3> {
-        let (n1, n2, n_dot_v, nn) = if !inside {
-            (1.0, ior, n.dot(v), *n)
-        } else {
-            (ior, 1.0, -n.dot(v), -n)
-        };
-
-        let ratio = n1 / n2;
-        let disc = 1.0 - ((ratio * ratio) * (1.0 - n_dot_v * n_dot_v));
-
-        if disc < 0.0 {
-            None // Total internal reflection
-        } else {
-            Some(v.scale(-ratio) + nn.scale(ratio * n_dot_v - disc.sqrt()))
-        }
-    }
 
     pub fn lerp(v1: &Vec3, v2: &Vec3, alpha: f64) -> Vec3 {
         Vec3 {
