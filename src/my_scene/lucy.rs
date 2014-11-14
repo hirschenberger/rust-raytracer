@@ -5,8 +5,6 @@ use geometry::prims::{Plane, Sphere, Triangle};
 use light::light::{Light};
 use light::lights::{PointLight, SphereLight};
 use material::materials::{CookTorranceMaterial};
-use material::Texture;
-use material::textures::{CheckerTexture, CubeMap, UVTexture, ImageTexture};
 use raytracer::Octree;
 use scene::{Camera, Scene};
 use vec3::Vec3;
@@ -27,7 +25,7 @@ pub fn get_scene() -> Scene {
     let mut lights: Vec<Box<Light+Send+Sync>> = Vec::new();
     lights.push(box SphereLight { position: Vec3 { x: -1400.0, y: 200.0, z: 100.0 }, intensity: 0.7, radius: 50.0 });
 
-    let grey = CookTorranceMaterial { k_a: 0.0, k_d: 0.5, k_s: 0.8, k_sg: 0.5, k_tg: 0.0, gauss_constant: 5.0, roughness: 0.1, ior: 0.4, ambient: 1.0, diffuse: 0.6, specular: 1.0, transmission: 0.0, diffuse_texture: None };
+    let grey = CookTorranceMaterial { k_a: 0.0, k_d: 0.5, k_s: 0.8, k_sg: 0.5, k_tg: 0.0, gauss_constant: 5.0, roughness: 0.1, ior: 0.4, ambient: 1.0, diffuse: 0.6, specular: 1.0, transmission: 0.0 };
 
     let mut prims: Vec<Box<Prim+Send+Sync>> = Vec::new();
     let lucy = ::util::import::from_obj(grey, true, "./docs/assets/models/lucy.obj");

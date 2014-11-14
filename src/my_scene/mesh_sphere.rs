@@ -5,8 +5,6 @@ use geometry::prims::{Plane, Sphere, Triangle};
 use light::light::{Light};
 use light::lights::{PointLight, SphereLight};
 use material::materials::{CookTorranceMaterial};
-use material::Texture;
-use material::textures::{CheckerTexture, CubeMap, UVTexture, ImageTexture};
 use mat4::{Mat4, Transform};
 use raytracer::Octree;
 use scene::{Camera, Scene};
@@ -35,8 +33,8 @@ pub fn get_scene() -> Scene {
         gauss_constant: 5.0, roughness: 0.1, ior: 1.1, ambient: 1.0, 
         diffuse: 0.8, 
         specular: 1.0, 
-        transmission: 0.0, 
-        diffuse_texture: None };
+        transmission: 0.0 
+        };
 
 
     let mut prims: Vec<Box<Prim+Send+Sync>> = Vec::new();

@@ -5,8 +5,6 @@ use geometry::prims::{Plane, Sphere, Triangle};
 use light::light::{Light};
 use light::lights::{PointLight, SphereLight};
 use material::materials::{CookTorranceMaterial};
-use material::Texture;
-use material::textures::{CheckerTexture, CubeMap, UVTexture, ImageTexture};
 use mat4::{Mat4, Transform};
 use raytracer::Octree;
 use scene::{Camera, Scene};
@@ -31,7 +29,7 @@ pub fn get_teapot_scene() -> Scene {
     let mut lights: Vec<Box<Light+Send+Sync>> = Vec::new();
     lights.push(box SphereLight { position: Vec3 { x: 0.6, y: 2.0, z: 1.2 }, intensity: 1.0, radius: 1.0 });
 
-    let porcelain = CookTorranceMaterial { k_a: 0.0, k_d: 0.9, k_s: 1.0, k_sg: 1.0, k_tg: 0.0, gauss_constant: 5.0, roughness: 0.1, ior: 1.1, ambient: 1.0, diffuse: 0.8, specular: 1.0, transmission: 0.0, diffuse_texture: None };
+    let porcelain = CookTorranceMaterial { k_a: 0.0, k_d: 0.9, k_s: 1.0, k_sg: 1.0, k_tg: 0.0, gauss_constant: 5.0, roughness: 0.1, ior: 1.1, ambient: 1.0, diffuse: 0.8, specular: 1.0, transmission: 0.0 };
 
     let mut prims: Vec<Box<Prim+Send+Sync>> = Vec::new();
     // prims.push(box Plane { a: 0.0, b: 1.0, c: 0.0, d: 0.0, material: box green });
