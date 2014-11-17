@@ -34,7 +34,7 @@ struct SceneConfig<'a> {
     size: (int, int),
     fov: f64,
     focal_dist: (f64, f64),
-    min_intensity: u8,
+    min_intensity: f64,
     shadow_samples: uint,
     pixel_samples: uint,
     output_file: String
@@ -123,6 +123,7 @@ fn main() {
     let renderer = raytracer::Renderer {
         shadow_samples: config.shadow_samples,
         pixel_samples: config.pixel_samples,
+        min_intensity: config.min_intensity,
         // Number of tasks to spawn. Will use up max available cores.
         tasks: std::os::num_cpus()
     };

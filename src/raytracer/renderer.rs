@@ -13,6 +13,7 @@ pub static EPSILON: f64 = ::std::f64::EPSILON * 10000.0;
 pub struct Renderer {
     pub shadow_samples: uint, // Number of samples for soft shadows and area lights.
     pub pixel_samples: uint,  // The square of this is the number of samples per pixel.
+    pub min_intensity: f64,
     pub tasks: uint           // Minimum number of tasks to spawn.
 }
 
@@ -98,7 +99,7 @@ impl Renderer {
                         };
 
                         let ray = camera.get_ray(abs_x as f64 + j_x, abs_y as f64 + j_y);
-                        let result = Renderer::trace(scene, &ray, shadow_samples);
+                        let result = Renderer::trace(scene, &ray, shadow_samples, self.min_intensity);
                         // Clamp subpixels for now to avoid intense aliasing when combined value is clamped later
                         // Should think of a better way to handle this
                         color = color + result / (pixel_samples * pixel_samples) as f64;
@@ -111,9 +112,10 @@ impl Renderer {
         box tile
     }
 
-    fn trace(scene: &Scene, ray: &Ray, shadow_samples: uint) -> f64 {
+    fn trace(scene: &Scene, ray: &Ray, shadow_samples: uint, min_intensity: f64) -> f64 {
         match ray.get_nearest_hit(scene) {
             Some(hit) => {
+                // check if hit is out of focus
                 let d =  (ray.origin - hit.position).len();
                 if d < ray.focus_near || d > ray.focus_far {
                     scene.background
@@ -128,7 +130,12 @@ impl Renderer {
 
                         color_acc + light.intensity() * hit.material.sample(n, i, l, hit.u, hit.v) * shadow
                     });
-                    result
+                    // check if hit is bright enough
+                    if result > min_intensity {
+                        result
+                    } else {
+                        scene.background
+                    }
                 }
             },
             None => { scene.background }

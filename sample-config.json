@@ -2,7 +2,7 @@
     "size": [512, 512],
     "fov": 30.0,
     "focal_dist": [10.0, 10.5],
-    "min_intensity": 128,
+    "min_intensity": 0.5,
     "shadow_samples": 1,
     "pixel_samples": 2,
     "output_file": "test"
