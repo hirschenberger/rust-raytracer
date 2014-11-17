@@ -112,7 +112,8 @@ fn main() {
 
     println!("Job started at {}...\nLoading scene...", start_time);
 
-    let camera = my_scene::mesh_sphere::get_camera(config.size.0, config.size.1, config.fov);
+    let camera = my_scene::mesh_sphere::get_camera(config.size.0, config.size.1, 
+                                                   config.fov, config.focal_dist.0, config.focal_dist.1);
     let scene =  Arc::new(my_scene::mesh_sphere::get_scene());
 
 

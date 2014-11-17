@@ -18,11 +18,13 @@ pub struct Ray {
     pub origin: Vec3,
     pub direction: Vec3,
     pub inverse_dir: Vec3, // This is used to optimise ray-bbox intersection checks
+    pub focus_near: f64,
+    pub focus_far: f64,
     pub signs: Vec<bool> // Handle degenerate case in bbox intersection
 }
 
 impl Ray {
-    pub fn new(origin: Vec3, direction: Vec3) -> Ray {
+    pub fn new(origin: Vec3, direction: Vec3, focus_near: f64, focus_far: f64) -> Ray {
         let inv_x = 1.0 / direction.x;
         let inv_y = 1.0 / direction.y;
         let inv_z = 1.0 / direction.z;
@@ -35,6 +37,8 @@ impl Ray {
                 y: inv_y,
                 z: inv_z
             },
+            focus_near: focus_near,
+            focus_far: focus_far,
             signs: vec![
                 inv_x > 0.0,
                 inv_y > 0.0,

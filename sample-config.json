@@ -1,7 +1,7 @@
 {
     "size": [512, 512],
     "fov": 30.0,
-    "focal_dist": [6.0, 6.5],
+    "focal_dist": [10.0, 10.5],
     "min_intensity": 128,
     "shadow_samples": 1,
     "pixel_samples": 2,

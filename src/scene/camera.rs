@@ -7,6 +7,8 @@ pub struct Camera {
     pub look_at: Vec3,
     pub up: Vec3,
     pub fov_deg: f64,
+    pub focus_near: f64,
+    pub focus_far: f64,
     pub image_width: int,
     pub image_height: int,
 
@@ -20,7 +22,7 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(position: Vec3, look_at: Vec3, up: Vec3, fov_deg: f64,
+    pub fn new(position: Vec3, look_at: Vec3, up: Vec3, fov_deg: f64, focus_near: f64, focus_far: f64,
                image_width: int, image_height: int)
                -> Camera {
 
@@ -29,6 +31,8 @@ impl Camera {
             look_at: look_at,
             up: up,
             fov_deg: fov_deg,
+            focus_near: focus_near,
+            focus_far: focus_far,
             image_width: image_width,
             image_height: image_height,
             eye: Vec3::zero(),
@@ -50,7 +54,8 @@ impl Camera {
         Ray::new(
             self.position,
             (self.eye + self.right.scale(x * self.pixel_width - self.half_width) +
-            self.up.scale(y * self.pixel_height - self.half_height)).unit()
+            self.up.scale(y * self.pixel_height - self.half_height)).unit(),
+            self.focus_near, self.focus_far
         )
     }
 

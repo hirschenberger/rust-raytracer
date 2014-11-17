@@ -1,6 +1,7 @@
 use std::rand::{task_rng, Rng, SeedableRng, Isaac64Rng};
 use std::sync::Arc;
 use std::sync::deque::{BufferPool, Data, Empty, Abort};
+use std::f64;
 use raytracer::compositor::{ColorRGBA, Surface, SurfaceFactory};
 use raytracer::{Intersection, Ray};
 use light::Light;
@@ -113,17 +114,22 @@ impl Renderer {
     fn trace(scene: &Scene, ray: &Ray, shadow_samples: uint) -> f64 {
         match ray.get_nearest_hit(scene) {
             Some(hit) => {
-                let n = hit.n.unit();
-                let i = (-ray.direction).unit();
+                let d =  (ray.origin - hit.position).len();
+                if d < ray.focus_near || d > ray.focus_far {
+                    scene.background
+                } else {
+                    let n = hit.n.unit();
+                    let i = (-ray.direction).unit();
 
-                // Local lighting computation: surface shading, shadows
-                let result = scene.lights.iter().fold(0f64, |color_acc, light| {
-                    let shadow = Renderer::shadow_intensity(scene, &hit, light, shadow_samples);
-                    let l = (light.center() - hit.position).unit();
+                    // Local lighting computation: surface shading, shadows
+                    let result = scene.lights.iter().fold(0f64, |color_acc, light| {
+                        let shadow = Renderer::shadow_intensity(scene, &hit, light, shadow_samples);
+                        let l = (light.center() - hit.position).unit();
 
-                    color_acc + light.intensity() * hit.material.sample(n, i, l, hit.u, hit.v) * shadow
-                });
-                result
+                        color_acc + light.intensity() * hit.material.sample(n, i, l, hit.u, hit.v) * shadow
+                    });
+                    result
+                }
             },
             None => { scene.background }
         }
@@ -145,7 +151,7 @@ impl Renderer {
             // until light source.
             let sampled_light_position = light.position();
             let shadow_l = (sampled_light_position - hit.position).unit();
-            let shadow_ray = Ray::new(hit.position, shadow_l);
+            let shadow_ray = Ray::new(hit.position, shadow_l, 0.0, f64::MAX_VALUE);
             let distance_to_light = (sampled_light_position - hit.position).len();
             // Check against candidate primitives in scene for occlusion
             // and multiply shadow color by occluders' shadow colors

@@ -14,12 +14,14 @@ use vec3::Vec3;
 // You can still manually tweak it if you wish (try reducing k_sg for metals)
 
 // 2500 polys, marginal improvement from an octree
-pub fn get_camera(image_width: int, image_height: int, fov: f64) -> Camera {
+pub fn get_camera(image_width: int, image_height: int, fov: f64, focus_near: f64, focus_far: f64) -> Camera {
     Camera::new(
         Vec3 { x: 0.0, y: 0.0, z: -15.0 },
         Vec3 { x: 0.0, y: 0.0, z: 0.0 },
         Vec3 { x: 1.0, y: 0.0, z: 0.0 },
         fov,
+        focus_near,
+        focus_far,
         image_width,
         image_height
     )
