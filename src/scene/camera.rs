@@ -1,3 +1,4 @@
+use std::num::{Float, FloatMath};
 use raytracer::Ray;
 use vec3::Vec3;
 

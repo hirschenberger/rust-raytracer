@@ -5,6 +5,7 @@ use raytracer::Ray;
 use std::cmp;
 use std::f64::consts::PI;
 use std::fmt;
+use std::num::{Float, FloatMath};
 use vec3::Vec3;
 
 /// Stored in row-major, M_(i, j) = i-th row and j-th column

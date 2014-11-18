@@ -1,3 +1,4 @@
+use std::num::{Float, FloatMath};
 use std::fmt;
 use std::cmp;
 
